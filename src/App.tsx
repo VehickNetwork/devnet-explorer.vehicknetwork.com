@@ -12,7 +12,7 @@ export default function App() {
   };
 
   return (
-    <div className="app">
+    <div className="p-4">
       <h1>Search car by Vin</h1>
       <input value={search} onChange={(e) => setSearch(e.target.value)} />
       <button onClick={getAssociations}>Search</button>
@@ -21,7 +21,11 @@ export default function App() {
       ) : (
         <div>
           {transactions.map((tx: any, i: number) => (
-            <p key={i}>{tx.txHash}</p>
+            <div className="p-5">
+              <h1>Action: {tx.action}</h1>
+              <h2>Action Value: {tx.actionValue}</h2>
+              <p id={i.toString()}>Tx Hash: {tx.txHash}</p>
+            </div>
           ))}
         </div>
       )}
