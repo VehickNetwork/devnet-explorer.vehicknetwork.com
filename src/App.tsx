@@ -28,7 +28,7 @@ export default function App() {
     }
   };
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-x-hidden">
       <h1>Search</h1>
       <div className="flex items-center justify-center">
         <input
@@ -52,7 +52,7 @@ export default function App() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button
-          className="inline-block px-4 py-2 font-bold text-white align-middle bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+          className="inline-block px-4 py-2 ml-2 font-bold text-white align-middle bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
           onClick={
             search.length == 62 && search.includes("erd")
               ? getTransactionsByAddress
@@ -66,7 +66,7 @@ export default function App() {
         <p>No results</p>
       ) : (
         <div className="px-2 py-4">
-          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
+          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-md">
             <h1>VIN: {transactions[transactions.length - 1].actionValue}</h1>
             <div className="flex pt-4">
               <h1 className="pr-2">Current mileage:</h1>
@@ -78,10 +78,20 @@ export default function App() {
           </div>
           <h1 className="py-4 font-bold">History:</h1>
           {transactions.map((tx: any, i: number) => (
-            <div className="p-6 my-4 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
+            <div className="p-6 my-4 bg-white border border-gray-200 rounded-lg shadow-md">
               <h1>Action: {tx.action}</h1>
               <h2>Action Value: {tx.actionValue}</h2>
-              <p id={i.toString()}>Tx Hash: {tx.txHash}</p>
+              <a
+                target="_blank"
+                href={`https://devnet-explorer.elrond.com/transactions/${tx.txHash}`}
+                className="block truncate"
+                id={i.toString()}
+              >
+                Tx Hash:
+                <span className="pl-2 text-blue-500 hover:opacity-75">
+                  {tx.txHash}
+                </span>
+              </a>
               <p>Date: {tx.timestamp}</p>
             </div>
           ))}
