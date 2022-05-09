@@ -44,7 +44,7 @@ export default function App() {
     setLoading(true);
   };
   return (
-    <div className="p-4 overflow-x-hidden">
+    <div className="block p-2">
       <h1>Search</h1>
       <div className="flex items-center justify-center">
         <input
