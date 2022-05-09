@@ -1,14 +1,19 @@
 import React from "react";
 import axios from "axios";
+import ResultList from "./components/ResultList";
+import { ResultCard } from "./components/ResultCard";
+import Skeleton from "react-loading-skeleton";
+import VehickDetails from "./components/ResultList";
 export default function App() {
   const [search, setSearch] = React.useState("");
-  const [transactions, setTransactions] = React.useState(null);
-  const [measureUnit, setMeasureUnit] = React.useState("");
+  const [transactions, setTransactions] = React.useState(undefined);
+  const [loading, setLoading] = React.useState(false);
   const getTransactionsByVin = () => {
     axios
       .get("https://devnet-gateway.vehicknetwork.com/api/carVin/" + search)
       .then((response) => {
         setTransactions(response.data);
+        setLoading(false);
       });
   };
   const getTransactionsByAddress = () => {
@@ -16,16 +21,27 @@ export default function App() {
       .get("https://devnet-gateway.vehicknetwork.com/api/carAddress/" + search)
       .then((response) => {
         setTransactions(response.data);
+        setLoading(false);
       });
   };
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       if (search.length == 62 && search.includes("erd")) {
         getTransactionsByAddress();
+        setLoading(true);
       } else {
         getTransactionsByVin();
+        setLoading(true);
       }
     }
+  };
+  const handleClick = () => {
+    if (search.length == 62 && search.includes("erd")) {
+      getTransactionsByAddress();
+    } else {
+      getTransactionsByVin();
+    }
+    setLoading(true);
   };
   return (
     <div className="p-4 overflow-x-hidden">
@@ -34,6 +50,7 @@ export default function App() {
         <input
           className="form-control
         block
+
         w-full
         px-3
         py-1.5
@@ -53,49 +70,20 @@ export default function App() {
         />
         <button
           className="inline-block px-4 py-2 ml-2 font-bold text-white align-middle bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-          onClick={
-            search.length == 62 && search.includes("erd")
-              ? getTransactionsByAddress
-              : getTransactionsByVin
-          }
+          onClick={handleClick}
         >
           Search
         </button>
       </div>
-      {!transactions ? (
-        <p>No results</p>
+      {loading ? (
+        <>
+          <ResultCard loading={loading} />
+          <ResultCard loading={loading} />
+          <ResultCard loading={loading} />
+          <ResultCard loading={loading} />
+        </>
       ) : (
-        <div className="px-2 py-4">
-          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-md">
-            <h1>VIN: {transactions[transactions.length - 1].actionValue}</h1>
-            <div className="flex pt-4">
-              <h1 className="pr-2">Current mileage:</h1>
-              <h1 className="pr-2">{transactions[0].actionValue}</h1>
-              <h1 className="pr-2">
-                {transactions[transactions.length - 2].actionValue}
-              </h1>
-            </div>
-          </div>
-          <h1 className="py-4 font-bold">History:</h1>
-          {transactions.map((tx: any, i: number) => (
-            <div className="p-6 my-4 bg-white border border-gray-200 rounded-lg shadow-md">
-              <h1>Action: {tx.action}</h1>
-              <h2>Action Value: {tx.actionValue}</h2>
-              <a
-                target="_blank"
-                href={`https://devnet-explorer.elrond.com/transactions/${tx.txHash}`}
-                className="block truncate"
-                id={i.toString()}
-              >
-                Tx Hash:
-                <span className="pl-2 text-blue-500 hover:opacity-75">
-                  {tx.txHash}
-                </span>
-              </a>
-              <p>Date: {tx.timestamp}</p>
-            </div>
-          ))}
-        </div>
+        <ResultList loading={loading} transactions={transactions} />
       )}
     </div>
   );
