@@ -13,7 +13,7 @@ export default function App() {
   const [vehickInformation,setVehickInformation]= React.useState(undefined);
  
   React.useEffect(() => {
-    if(!transactions){
+    if(transactions){
     const interval = setInterval(() => {
       if (search.length == 62 && search.includes("erd")) {
         getTransactionsByAddress();
@@ -50,9 +50,9 @@ export default function App() {
         }
         setTransactionLength(response.data.length);
       }).then(()=>{
-        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1].actionValue}?format=json`).then((response)=>{
-    setVehickInformation(response.data);
-    console.log(response.data);
+        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1]?.actionValue}?format=json`).then((response)=>{
+    setVehickInformation(response?.data?.Results[0]);
+    console.log(response.data.Results[0]);
       });
   });
 }
