@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useSyncExternalStore } from "react";
 import axios from "axios";
 import ResultList from "./components/ResultList";
 import { ResultCard } from "./components/ResultCard";
@@ -7,13 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const [search, setSearch] = React.useState("");
-  const [transactions, setTransactions] = React.useState(undefined);
+  const [transactions, setTransactions] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [transactionLength, setTransactionLength] = React.useState(null);
-
+  const [vehickInformation,setVehickInformation]= React.useState(undefined);
  
   React.useEffect(() => {
-    if(transactions!=undefined){
+    if(!transactions){
     const interval = setInterval(() => {
       if (search.length == 62 && search.includes("erd")) {
         getTransactionsByAddress();
@@ -24,6 +24,9 @@ export default function App() {
     return () => clearInterval(interval);
     }
   }, [transactions]);
+
+
+
 
   const getTransactionsByVin = () => {
     axios
@@ -46,8 +49,13 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
+      }).then(()=>{
+        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1].actionValue}?format=json`).then((response)=>{
+    setVehickInformation(response.data);
+    console.log(response.data);
       });
-  };
+  });
+}
   const getTransactionsByAddress = () => {
     axios
       .get("https://devnet-gateway.vehicknetwork.com/api/carAddress/" + search)
@@ -69,6 +77,11 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
+      }).then(()=>{
+        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1].actionValue}?format=json`).then((response)=>{
+    setVehickInformation(response.data);
+    console.log(response.data);
+  });
       });
   };
   const handleKeyPress = (event: any) => {
@@ -82,13 +95,16 @@ export default function App() {
         setTransactionLength(null);
         setLoading(true);
       }
+      
     }
   };
   const handleClick = () => {
     if (search.length == 62 && search.includes("erd")) {
       getTransactionsByAddress();
+      
     } else {
       getTransactionsByVin();
+     
     }
     setLoading(true);
     setTransactionLength(null);
@@ -149,5 +165,3 @@ export default function App() {
     </div>
   );
 }
-
-
