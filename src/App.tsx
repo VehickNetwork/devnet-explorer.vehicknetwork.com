@@ -2,8 +2,6 @@ import React, { useRef } from "react";
 import axios from "axios";
 import ResultList from "./components/ResultList";
 import { ResultCard } from "./components/ResultCard";
-import Skeleton from "react-loading-skeleton";
-import VehickDetails from "./components/ResultList";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,46 +10,20 @@ export default function App() {
   const [transactions, setTransactions] = React.useState(undefined);
   const [loading, setLoading] = React.useState(false);
   const [transactionLength, setTransactionLength] = React.useState(null);
-  const prevTransactionLength = usePrevious(transactionLength);
+
+ 
   React.useEffect(() => {
+    if(transactions!=undefined){
     const interval = setInterval(() => {
       if (search.length == 62 && search.includes("erd")) {
         getTransactionsByAddress();
-        if (
-          prevTransactionLength != transactionLength &&
-          prevTransactionLength != null
-        ) {
-          toast.success("New information", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
       } else {
-        console.log("new:", transactionLength, "old: ", prevTransactionLength);
         getTransactionsByVin();
-        if (
-          prevTransactionLength != transactionLength &&
-          prevTransactionLength != null
-        ) {
-          toast.success("New information", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
       }
     }, 7500);
     return () => clearInterval(interval);
-  }, [transactionLength]);
+    }
+  }, [transactions]);
 
   const getTransactionsByVin = () => {
     axios
@@ -59,6 +31,20 @@ export default function App() {
       .then((response) => {
         setTransactions(response.data);
         setLoading(false);
+        if (
+          transactionLength != response.data.length &&
+          transactionLength != null
+        ) {
+          toast.success("New information received", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
         setTransactionLength(response.data.length);
       });
   };
@@ -68,6 +54,20 @@ export default function App() {
       .then((response) => {
         setTransactions(response.data);
         setLoading(false);
+        if (
+          transactionLength != response.data.length &&
+          transactionLength != null
+        ) {
+          toast.success("New information received", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
         setTransactionLength(response.data.length);
       });
   };
@@ -149,10 +149,5 @@ export default function App() {
     </div>
   );
 }
-function usePrevious(value: any) {
-  const ref = useRef();
-  React.useEffect(() => {
-    ref.current = value; //assign the value of ref to the argument
-  }, [value]); //this code will run when the value of 'value' changes
-  return ref.current; //in the end, return the current ref value.
-}
+
+
