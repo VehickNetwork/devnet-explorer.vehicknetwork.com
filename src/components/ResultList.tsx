@@ -6,8 +6,7 @@ import NumberFormat from "react-number-format";
 export default function ResultList(props: any) {
   const resultList = props.transactions;
   const loading = props.loading;
-  const vehickInformation=props.vehickInformation;
- 
+  const vehickInformation = props.vehickInformation;
 
   const listItems = resultList?.map((transaction: any, i: number) => (
     <ResultCard
@@ -16,21 +15,25 @@ export default function ResultList(props: any) {
       loading={loading}
     />
   ));
-  if(resultList && vehickInformation){
-  return (
-    <>
-      <VehickDetails loading={loading} resultList={resultList} vehickInformation={vehickInformation}/>
-      <ul>{listItems}</ul>
-    </>
-  );
+  if (resultList && vehickInformation) {
+    return (
+      <>
+        <VehickDetails
+          loading={loading}
+          resultList={resultList}
+          vehickInformation={vehickInformation}
+        />
+        <ul>{listItems}</ul>
+      </>
+    );
   }
 }
 export function VehickDetails(props: any) {
   const loading = props.loading;
   const resultList = props.resultList;
-  const vehickInformation=props.vehickInformation;
-console.log(vehickInformation);
-  if (resultList && vehickInformation) {
+  const vehickInformation = props.vehickInformation;
+  console.log(vehickInformation);
+  if (resultList) {
     return (
       <>
         <div className="p-2 my-4 bg-white border border-gray-200 rounded-lg shadow-md text-small ">
@@ -75,35 +78,28 @@ console.log(vehickInformation);
             )}
           </h2>
           <h3>
-           <b>Manufacturer: </b>{
-             loading ? <Skeleton /> : vehickInformation.Manufacturer
-           }
+            <b>Manufacturer: </b>
+            {loading ? <Skeleton /> : vehickInformation.Manufacturer}
           </h3>
           <h3>
-           <b>Make: </b>{
-             loading ? <Skeleton /> : vehickInformation.Make
-           }
+            <b>Make: </b>
+            {loading ? <Skeleton /> : vehickInformation.Make}
           </h3>
           <h3>
-           <b>Model: </b>{
-             loading ? <Skeleton /> : vehickInformation.Model
-           }
+            <b>Model: </b>
+            {loading ? <Skeleton /> : vehickInformation.Model}
           </h3>
           <h3>
-           <b>Year: </b>{
-             loading ? <Skeleton /> : vehickInformation.ModelYear
-           }
+            <b>Year: </b>
+            {loading ? <Skeleton /> : vehickInformation.ModelYear}
           </h3>
           <h3>
-           <b>Country: </b>{
-             loading ? <Skeleton /> : vehickInformation.PlantCountry
-           }
+            <b>Country: </b>
+            {loading ? <Skeleton /> : vehickInformation.PlantCountry}
           </h3>
           <h3>
-           <b>Type: </b>
-           {
-             loading ? <Skeleton /> : vehickInformation.VehicleType
-           }
+            <b>Type: </b>
+            {loading ? <Skeleton /> : vehickInformation.VehicleType}
           </h3>
         </div>
       </>
