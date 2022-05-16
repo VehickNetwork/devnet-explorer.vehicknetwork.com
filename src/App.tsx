@@ -10,7 +10,7 @@ export default function App() {
   const [transactions, setTransactions] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [transactionLength, setTransactionLength] = React.useState(null);
-  const [vehickInformation,setVehickInformation]= React.useState(undefined);
+  const [vehickInformation,setVehickInformation]= React.useState(null);  //vehicle information from api 
  
   React.useEffect(() => {
     if(transactions){
@@ -20,12 +20,11 @@ export default function App() {
       } else {
         getTransactionsByVin();
       }
-    }, 7500);
+    }, 70500);
     return () => clearInterval(interval);
     }
+ 
   }, [transactions]);
-
-
 
 
   const getTransactionsByVin = () => {
@@ -49,12 +48,13 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
-      }).then(()=>{
-        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1]?.actionValue}?format=json`).then((response)=>{
-    setVehickInformation(response?.data?.Results[0]);
-    console.log(response.data.Results[0]);
-      });
+    return axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${response.data[response.data.length -1].actionValue}?format=json`);
+  }).then((response)=>{
+      setVehickInformation(response.data.Results[0]);
+      
   });
+
+  
 }
   const getTransactionsByAddress = () => {
     axios
@@ -77,13 +77,11 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
-      }).then(()=>{
-        axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${transactions[transactions?.length -1].actionValue}?format=json`).then((response)=>{
-    setVehickInformation(response.data);
-    console.log(response.data);
-  });
-      });
-  };
+        return axios.get(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${response.data[response.data.length -1].actionValue}?format=json`);
+  }).then((response)=>{
+    setVehickInformation(response.data.Results[0]);
+});
+  }
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       if (search.length == 62 && search.includes("erd")) {
@@ -95,7 +93,7 @@ export default function App() {
         setTransactionLength(null);
         setLoading(true);
       }
-      
+   
     }
   };
   const handleClick = () => {
@@ -108,6 +106,7 @@ export default function App() {
     }
     setLoading(true);
     setTransactionLength(null);
+  
   };
   return (
     <div className="block p-2">
@@ -149,7 +148,7 @@ export default function App() {
           <ResultCard loading={loading} />
         </>
       ) : (
-        <ResultList loading={loading} transactions={transactions} />
+        <ResultList loading={loading} transactions={transactions} vehickInformation={vehickInformation} />
       )}
       <ToastContainer
         position="bottom-right"
