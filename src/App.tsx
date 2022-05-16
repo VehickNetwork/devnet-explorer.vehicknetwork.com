@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useSyncExternalStore } from "react";
 import axios from "axios";
 import ResultList from "./components/ResultList";
 import { ResultCard } from "./components/ResultCard";
@@ -7,21 +7,21 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const [search, setSearch] = React.useState("");
-  const [transactions, setTransactions] = React.useState(undefined);
+  const [transactions, setTransactions] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [transactionLength, setTransactionLength] = React.useState(null);
+  const [vehickInformation, setVehickInformation] = React.useState(null); //vehicle information from api
 
- 
   React.useEffect(() => {
-    if(transactions!=undefined){
-    const interval = setInterval(() => {
-      if (search.length == 62 && search.includes("erd")) {
-        getTransactionsByAddress();
-      } else {
-        getTransactionsByVin();
-      }
-    }, 7500);
-    return () => clearInterval(interval);
+    if (transactions) {
+      const interval = setInterval(() => {
+        if (search.length == 62 && search.includes("erd")) {
+          getTransactionsByAddress();
+        } else {
+          getTransactionsByVin();
+        }
+      }, 7500);
+      return () => clearInterval(interval);
     }
   }, [transactions]);
 
@@ -46,6 +46,14 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
+        return axios.get(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${
+            response.data[response.data.length - 1].actionValue
+          }?format=json`
+        );
+      })
+      .then((response) => {
+        setVehickInformation(response.data.Results[0]);
       });
   };
   const getTransactionsByAddress = () => {
@@ -69,19 +77,27 @@ export default function App() {
           });
         }
         setTransactionLength(response.data.length);
+        return axios.get(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${
+            response.data[response.data.length - 1].actionValue
+          }?format=json`
+        );
+      })
+      .then((response) => {
+        setVehickInformation(response.data.Results[0]);
       });
   };
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       if (search.length == 62 && search.includes("erd")) {
         getTransactionsByAddress();
-        setTransactionLength(null);
         setLoading(true);
       } else {
         getTransactionsByVin();
-        setTransactionLength(null);
         setLoading(true);
       }
+
+      setTransactionLength(null);
     }
   };
   const handleClick = () => {
@@ -133,7 +149,11 @@ export default function App() {
           <ResultCard loading={loading} />
         </>
       ) : (
-        <ResultList loading={loading} transactions={transactions} />
+        <ResultList
+          loading={loading}
+          transactions={transactions}
+          vehickInformation={vehickInformation}
+        />
       )}
       <ToastContainer
         position="bottom-right"
@@ -149,5 +169,3 @@ export default function App() {
     </div>
   );
 }
-
-
