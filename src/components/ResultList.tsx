@@ -65,11 +65,7 @@ export function VehickDetails(props: any) {
             {loading ? (
               <Skeleton />
             ) : (
-              <NumberFormat
-                thousandSeparator={true}
-                value={resultList[0]?.actionValue}
-                displayType={"text"}
-              />
+              resultList[0]?.actionValue
             )}
             {loading ? (
               <Skeleton />
