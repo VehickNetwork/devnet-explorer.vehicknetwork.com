@@ -45,7 +45,12 @@ export function VehickDetails(props: any) {
             {loading ? (
               <Skeleton />
             ) : (
-              resultList[resultList.length - 1]?.actionValue
+              resultList.map(element => {
+                console.log(element.action)
+                if(element.action=="addVIN"){
+                 return (resultList[resultList.indexOf(element)].actionValue)
+                }
+              })
             )}
           </h1>
           <b>Address: </b>
@@ -65,12 +70,17 @@ export function VehickDetails(props: any) {
             {loading ? (
               <Skeleton />
             ) : (
-              resultList[0]?.actionValue
+             (/[0-9]/.test(resultList[0]?.actionValue) ? `${resultList[0]?.actionValue} ` : "0 ")
             )}
             {loading ? (
               <Skeleton />
             ) : (
-              ` ${resultList[resultList.length - 2]?.actionValue}`
+              resultList.map(element => {
+                console.log(element.action)
+                if(element.action=="addMeasureUnit"){
+                 return (resultList[resultList.indexOf(element)].actionValue)
+                }
+              })
             )}
           </h2>
           <h3>
@@ -104,3 +114,4 @@ export function VehickDetails(props: any) {
     return <></>;
   }
 }
+
